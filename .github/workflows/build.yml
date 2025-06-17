@@ -65,37 +65,25 @@ jobs:
         key: ${{ matrix.target }}
         workspaces: rust-cli
 
-    - name: Install cross-compilation dependencies (Linux ARM64)
-      if: matrix.cross && matrix.target == 'aarch64-unknown-linux-gnu'
+    - name: Install cross-compilation tool
+      if: matrix.cross
       run: |
-        sudo apt-get update
-        sudo apt-get install -y gcc-aarch64-linux-gnu libc6-dev-arm64-cross
-        
-        # Add ARM64 architecture and install OpenSSL for cross-compilation
-        sudo dpkg --add-architecture arm64
-        sudo apt-get update
-        sudo apt-get install -y libssl-dev:arm64 pkg-config-aarch64-linux-gnu
-        
-        # Set up cross-compilation environment variables
-        echo "CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER=aarch64-linux-gnu-gcc" >> $GITHUB_ENV
-        echo "CC_aarch64_unknown_linux_gnu=aarch64-linux-gnu-gcc" >> $GITHUB_ENV
-        echo "PKG_CONFIG_aarch64_unknown_linux_gnu=aarch64-linux-gnu-pkg-config" >> $GITHUB_ENV
-        echo "PKG_CONFIG_SYSROOT_DIR=/usr/aarch64-linux-gnu" >> $GITHUB_ENV
+        cargo install cross --git https://github.com/cross-rs/cross
 
     - name: Build binary
       working-directory: rust-cli
       run: |
-        cargo build --release --target ${{ matrix.target }}
+        if [ "${{ matrix.cross }}" = "true" ]; then
+          cross build --release --target ${{ matrix.target }}
+        else
+          cargo build --release --target ${{ matrix.target }}
+        fi
 
     - name: Strip binary (Linux)
-      if: matrix.os == 'ubuntu-latest'
+      if: matrix.os == 'ubuntu-latest' && matrix.cross == false
       working-directory: rust-cli
       run: |
-        if [ "${{ matrix.cross }}" = "true" ]; then
-          aarch64-linux-gnu-strip target/${{ matrix.target }}/release/fn
-        else
-          strip target/${{ matrix.target }}/release/fn
-        fi
+        strip target/${{ matrix.target }}/release/fn
 
     - name: Strip binary (macOS)
       if: matrix.os == 'macos-latest'
