@@ -2,4 +2,7 @@
 pre-build = [
     "dpkg --add-architecture arm64",
     "apt-get update && apt-get install --assume-yes libssl-dev:arm64 pkg-config"
-] 
+]
+
+[target.aarch64-pc-windows-msvc]
+image = "ghcr.io/cross-rs/aarch64-pc-windows-msvc:main" 
