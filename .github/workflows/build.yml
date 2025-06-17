@@ -73,6 +73,7 @@ jobs:
 
     - name: Build binary
       working-directory: rust-cli
+      shell: bash
       run: |
         if [ "${{ matrix.cross }}" = "true" ]; then
           cross build --release --target ${{ matrix.target }}
@@ -83,6 +84,7 @@ jobs:
     - name: Strip binary (Linux)
       if: matrix.os == 'ubuntu-latest' && matrix.cross == false
       working-directory: rust-cli
+      shell: bash
       run: |
         strip target/${{ matrix.target }}/release/fn
 
