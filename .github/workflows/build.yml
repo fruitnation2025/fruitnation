@@ -48,7 +48,7 @@ jobs:
           - target: aarch64-pc-windows-msvc
             os: windows-latest
             name: fn-windows-aarch64
-            cross: false
+            cross: true
 
     steps:
     - name: Checkout code
@@ -67,6 +67,7 @@ jobs:
 
     - name: Install cross-compilation tool
       if: matrix.cross
+      shell: bash
       run: |
         cargo install cross --git https://github.com/cross-rs/cross
 
