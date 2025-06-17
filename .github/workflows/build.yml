@@ -48,7 +48,7 @@ jobs:
           - target: aarch64-pc-windows-msvc
             os: windows-latest
             name: fn-windows-aarch64
-            cross: true
+            cross: false
 
     steps:
     - name: Checkout code
@@ -91,6 +91,7 @@ jobs:
     - name: Strip binary (macOS)
       if: matrix.os == 'macos-latest'
       working-directory: rust-cli
+      shell: bash
       run: |
         strip target/${{ matrix.target }}/release/fn
 
