@@ -45,10 +45,6 @@ jobs:
             os: windows-latest
             name: fn-windows-x86_64
             cross: false
-          - target: aarch64-pc-windows-msvc
-            os: ubuntu-latest
-            name: fn-windows-aarch64
-            cross: true
 
     steps:
     - name: Checkout code
